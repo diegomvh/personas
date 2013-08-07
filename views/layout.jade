@@ -1,0 +1,35 @@
+!!!5
+html(ng-app="myApp")
+  head
+    meta(charset='utf8')
+    base(href='/')
+    title #{title} - Personas
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    .navbar.navbar-fixed-top
+      a.navbar-brand(href='#') Personas
+      ul.nav.navbar-nav
+        li
+          a(href='view1') View1
+        li
+          a(href='view2') View2
+    .google-map(hello-maps)
+    .container-fluid
+      block content
+    .sidebar
+      block sidebar
+    footer
+      | Angular seed app: v
+      span(app-version)
+
+    block javascript
+        script(src='//maps.google.com/maps/api/js?sensor=false')
+        script(src='/javascripts/lib/angular/angular.js')
+        script(src='/javascripts/app.js')
+        script(src='/javascripts/services.js')
+        script(src='/javascripts/controllers.js')
+        script(src='/javascripts/filters.js')
+        script(src='/javascripts/directives.js')
+        script(src='//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')
+        script(src='/bootstrap/js/bootstrap.min.js')        

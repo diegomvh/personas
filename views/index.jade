@@ -1,0 +1,9 @@
+extend layout
+block content
+  div(ng-controller='AppCtrl')
+    .hero-unit
+      h1 Hello {{name}}
+    div(ng-view)
+block sidebar
+  .widget
+    h1 Sidebar

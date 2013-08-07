@@ -1,0 +1,22 @@
+{
+  "name": "people",
+  "version": "0.0.1",
+  "description": "A nice people application",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "people",
+    "rest",
+    "angularjs"
+  ],
+  "author": "Diego van Haaster",
+  "license": "GPL3",
+  "dependencies": {
+    "express": "~3.3.4",
+    "mongoose": "~3.6.15",
+    "winston": "~0.7.2",
+    "jade": "~0.34.1"
+  }
+}

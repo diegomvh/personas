@@ -1,0 +1,4 @@
+.pmxproject/
+node_modules/
+logs/*.log
+config-local.js
