@@ -2,10 +2,19 @@ var PersonaModel = require('../models/persona');
 var logger = require('../utils/logger');
 
 function getPersonas(req, res) {
-    var query = PersonaModel.find().skip(20).limit(10);
+    /*
+        TODO Validar
+    */
+    var skip = Number(req.param("skip", 0)),
+        limit = Number(req.param("limit", 1000))
+    var query = PersonaModel.find().skip(skip).limit(limit);
     query.exec(function (err, personas) {
         if (!err) {
-            res.send(personas);
+            res.send({
+                offset: skip,
+                objects: personas,
+                total: personas.length
+            });
         } else {
             logger.log("error", err);
         }
