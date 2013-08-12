@@ -4,10 +4,12 @@ var DomicilioSchema = new mongoose.Schema({
     numero: Number,
     calle: String,
     localidad: String,
+    departamento: String,
     provincia: String,
+    pais: String,
     descripcion: String,
     location: [ Number ], // lat, lng
-    google_address: {
+    geoaddress: {
         geometry: {
             location: {
                 lat: { type: Number, required:true},
@@ -45,8 +47,18 @@ var PersonaSchema = new mongoose.Schema({
     clase: Number,
     sexo: String,
     nacimiento: { type: Date },
+    actualizado: { type: Date },
     ocupacion: String,
-    domicilio_actual: { type: mongoose.Schema.Types.ObjectId, ref: 'Domicilio' },
+    domicilio: { 
+        numero: { type: Number },
+        calle: { type: String },
+        localidad: { type: String },
+        departamento: { type: String },
+        provincia: { type: String },
+        pais: { type: String },
+        descripcion: { type: String },
+        location: [ Number ], // lat, lng 
+    },
     domicilios: [{
         fecha: { type: Date, default: Date.now },
         domicilio: { type: mongoose.Schema.Types.ObjectId, ref: 'Domicilio' }
