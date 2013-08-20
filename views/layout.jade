@@ -7,25 +7,7 @@ html(ng-app="Personas", ng-controller="AppCtrl")
     link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    nav.navbar.navbar-fixed-top.navbar-default(role="navigation")
-      a.navbar-brand(href='#') Personas
-      ul.nav.navbar-nav
-        li
-          a(href='view1') View1
-        li
-          a(href='view2') View2
-      form.navbar-form.navbar-left(role="search")
-        .form-group
-          input.form-control(placeholder="Search",ng-model="search")
-        button.btn(ng-click="geoCode()",ng-disabled="search.length == 0",title="search") &nbsp;
-          span.glyphicon.glyphicon-search
-        button.btn(ng-click="gotoCurrentLocation()",title="current location") &nbsp;
-          span.glyphicon.glyphicon-home
-      ul.nav.navbar-nav.navbar-right
-        li
-          a(href='view1') View1
-        li
-          a(href='view2') View2
+    include navbar
     app-map.google-map(center="loc",markers="localities")
     .container-fluid
       block content
