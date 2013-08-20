@@ -26,9 +26,11 @@ app.configure('production', function(){
 });
 
 var PersonaHandler = require('./handlers/persona');
+var DomicilioHandler = require('./handlers/domicilio');
 
 var handlers = {
   persona: new PersonaHandler(),
+  domicilio: new DomicilioHandler(),
 };
 
 function start() {

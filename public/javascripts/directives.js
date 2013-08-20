@@ -10,23 +10,6 @@ directives.directive('appVersion', ['version', function(version) {
     };
 }]);
 
-directives.directive('helloMaps', function () {
-    return function (scope, elem, attrs) {
-        var mapOptions,
-            latitude = attrs.latitude,
-            longitude = attrs.longitude,
-            map;
-
-
-        mapOptions = {
-            zoom: 7,
-            center: new google.maps.LatLng(latitude, longitude),
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        map = new google.maps.Map(elem[0], mapOptions);
-    };
-});
-
 directives.directive("appMap", function () {
     return {
         restrict: "E",
@@ -84,7 +67,7 @@ directives.directive("appMap", function () {
                 // get map options
                 var options =
                 {
-                    center:  new google.maps.LatLng(latitude, longitude),
+                    center:  new google.maps.LatLng(scope.center.lat, scope.center.lon),
                     zoom: 7,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
@@ -139,8 +122,8 @@ directives.directive("appMap", function () {
                     if (angular.isString(markers)) markers = scope.$eval(scope.markers);
                     for (var i = 0; i < markers.length; i++) {
                         var m = markers[i];
-                        var loc = new google.maps.LatLng(m.lat, m.lon);
-                        var mm = new google.maps.Marker({ position: loc, map: map, title: m.name });
+                        var loc = new google.maps.LatLng(m.location[0], m.location[1]);
+                        var mm = new google.maps.Marker({ position: loc, map: map, title: m.descripcion });
                         currentMarkers.push(mm);
                     }
                 }

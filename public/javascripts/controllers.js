@@ -2,16 +2,6 @@
 
 /* Controllers */
 
-function AppCtrl($scope, $http) {
-  $http({method: 'GET', url: '/name'}).
-  success(function(data, status, headers, config) {
-    $scope.name = data.name;
-  }).
-  error(function(data, status, headers, config) {
-    $scope.name = 'Error!'
-  });
-}
-
 function MyCtrl1() {}
 MyCtrl1.$inject = [];
 

@@ -1,43 +1,5 @@
 var mongoose = require('mongoose');
 
-var DomicilioSchema = new mongoose.Schema({
-    numero: Number,
-    calle: String,
-    localidad: String,
-    departamento: String,
-    provincia: String,
-    pais: String,
-    descripcion: String,
-    location: [ Number ], // lat, lng
-    geoaddress: {
-        geometry: {
-            location: {
-                lat: { type: Number, required:true},
-                lng: { type: Number, required:true},
-            },
-            viewport: {
-                northeast: {
-                    lat: { type: Number, required:true},
-                    lng: { type: Number, required:true},
-                },
-                southwest: {
-                    lat: { type: Number, required:true},
-                    lng: { type: Number, required:true},
-                }
-            },
-            location_type: { type: String, required:true},
-        },
-        address_components: [{
-            short_name: { type: String, required:true},
-            types: [ String ],
-            long_name: String,
-        }],
-        partial_match: Boolean,
-        formatted_address: String,
-        types: [ String ],
-    }
-});
-
 var PersonaSchema = new mongoose.Schema({ 
     documento: { type: Number, required:true},
     tipo_documento: String,
@@ -65,7 +27,6 @@ var PersonaSchema = new mongoose.Schema({
     }]
 });
 
-var DomicilioModel = mongoose.model('Domicilio', DomicilioSchema, 'domicilios');
 var PersonaModel = mongoose.model('Persona', PersonaSchema, 'personas');
 
 module.exports = PersonaModel

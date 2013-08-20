@@ -11,6 +11,7 @@ function name(req, res) {
 function setup(app, handlers) {
     app.get('/', index);
     app.get('/name', name);
+    app.get('/api/localidades', handlers.domicilio.getLocalidades);
     app.get('/api/personas', handlers.persona.getPersonas);
     app.get('/api/personas/:id', handlers.persona.getPersonaById);
 }
