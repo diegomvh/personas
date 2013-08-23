@@ -8,7 +8,7 @@ html(ng-app="Personas", ng-controller="AppCtrl")
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
     include navbar
-    app-map.google-map(center="loc",markers="localities")
+    app-map.google-map(center="loc")
     .container-fluid
       block content
     .sidebar
@@ -19,6 +19,7 @@ html(ng-app="Personas", ng-controller="AppCtrl")
 
     block javascript
         script(src='//maps.google.com/maps/api/js?sensor=false')
+        script(src='/javascripts/lib/maps/markermanager.js')
         script(src='/javascripts/lib/angular/angular.js')
         script(src='/javascripts/app.js')
         script(src='/javascripts/services.js')

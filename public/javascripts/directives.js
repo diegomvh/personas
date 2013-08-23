@@ -2,6 +2,14 @@
 
 /* Directives */
 
+/* 0 a 3 por pais
+4 a 6 por provincia
+7 a 10 por ciudad
+11 a 14 por zonas
+15 a 18 por cuadra
+19 en adelante se ve todo
+*/
+
 var directives = angular.module('Personas.directives', []);
 
 directives.directive('appVersion', ['version', function(version) {
@@ -10,7 +18,7 @@ directives.directive('appVersion', ['version', function(version) {
     };
 }]);
 
-directives.directive("appMap", function () {
+directives.directive("appMap", function ($http) {
     return {
         restrict: "E",
         replace: true,
@@ -29,9 +37,8 @@ directives.directive("appMap", function () {
         link: function (scope, element, attrs) {
             var toResize, toCenter;
             var map;
-            var currentMarkers;
-            var latitude = attrs.latitude;
-            var longitude = attrs.longitude;            
+            var markers;
+            var markerManager;
             
             // listen to changes in scope variables and update the control
             var arr = ["width", "height", "markers", "mapTypeId", "panControl", "zoomControl", "scaleControl"];
@@ -61,9 +68,6 @@ directives.directive("appMap", function () {
                 if (scope.width) element.width(scope.width);
                 if (scope.height) element.height(scope.height);
 
-                latitude = latitude && parseFloat(latitude, 10) || -43.822;
-                longitude = longitude && parseFloat(longitude, 10) || -68.362;
-        
                 // get map options
                 var options =
                 {
@@ -77,12 +81,10 @@ directives.directive("appMap", function () {
                 if (scope.panControl) options.panControl = scope.panControl;
                 if (scope.zoomControl) options.zoomControl = scope.zoomControl;
                 if (scope.scaleControl) options.scaleControl = scope.scaleControl;
-
+                
                 // create the map
                 map = new google.maps.Map(element[0], options);
-
-                // update markers
-                updateMarkers();
+                markerManager = new MarkerManager(map);
 
                 // listen to changes in the center property and update the scope
                 google.maps.event.addListener(map, 'center_changed', function () {
@@ -103,29 +105,28 @@ directives.directive("appMap", function () {
                         }
                     }, 500);
                 });
+                google.maps.event.addListener(map, 'zoom_changed', function() {
+                    var zoomLevel = map.getZoom();
+                    console.log(zoomLevel);
+                });
             }
-
-            // update map markers to match scope marker collection
-            function updateMarkers() {
-                if (map && scope.markers) {
-
-                    // clear old markers
-                    if (currentMarkers != null) {
-                        for (var i = 0; i < currentMarkers.length; i++) {
-                            currentMarkers[i] = m.setMap(null);
-                        }
-                    }
+            
+            // add markers
+            scope.addMarkers = function(locations, minZoom, maxZoom) {
+                if (map && locations) {
 
                     // create new markers
-                    currentMarkers = [];
-                    var markers = scope.markers;
-                    if (angular.isString(markers)) markers = scope.$eval(scope.markers);
-                    for (var i = 0; i < markers.length; i++) {
-                        var m = markers[i];
-                        var loc = new google.maps.LatLng(m.location[0], m.location[1]);
-                        var mm = new google.maps.Marker({ position: loc, map: map, title: m.descripcion });
-                        currentMarkers.push(mm);
+                    markers = [];
+                    if (angular.isString(locations)) locations = scope.$eval(locations);
+                    for (var i = 0; i < locations.length; i++) {
+                        var location = locations[i];
+                        var loc = new google.maps.LatLng(location.location[0], location.location[1]);
+                        var mm = new google.maps.Marker({ position: loc, title: location.descripcion });
+                        markers.push(mm);
                     }
+                    markerManager.addMarkers(markers, minZoom, maxZoom);
+
+                    markerManager.refresh();
                 }
             }
 
@@ -135,6 +136,31 @@ directives.directive("appMap", function () {
                 if (angular.isString(loc)) loc = scope.$eval(loc);
                 return new google.maps.LatLng(loc.lat, loc.lon);
             }
+            
+            $http.get('/api/paises').
+                success(function(data, status, headers, config) {
+                    scope.addMarkers(data.objects, 1, 3);
+                }).
+                error(function(data, status, headers, config) {
+                    console.log(data, status, headers, config);
+                });
+            
+            $http.get('/api/provincias').
+                success(function(data, status, headers, config) {
+                    scope.addMarkers(data.objects, 4, 6);
+                }).
+                error(function(data, status, headers, config) {
+                    console.log(data, status, headers, config);
+                });
+            
+            $http.get('/api/localidades').
+                success(function(data, status, headers, config) {
+                    scope.addMarkers(data.objects, 7, 10);
+                }).
+                error(function(data, status, headers, config) {
+                    console.log(data, status, headers, config);
+                });
+            
         }
     };
 });
