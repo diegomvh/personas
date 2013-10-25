@@ -64,11 +64,42 @@ function getLocalidades(req, res) {
     });
 }
 
+function getDomicilios(req, res) {
+    var skip = Number(req.param("skip")) || 0,
+        limit = Number(req.param("limit")) || 1000,
+        bounds = req.param("bounds"),
+        center = req.param("center");
+    var center = center.split(',');
+    center = [ Number(center[0]), Number(center[1]) ];
+    console.log(bounds, center);
+    var lugar = DomicilioModel({location: center})
+    var query = lugar.findNear({
+        "geoaddress.types": "street_address",
+
+        }, "_id descripcion location");
+    if (skip)
+        query.skip(skip);
+    if (limit)
+        query.limit(limit);
+    query.exec(function (err, domicilios) {
+        if (!err) {
+            res.send({
+                offset: 0,
+                objects: domicilios,
+                total: domicilios.length
+            });
+        } else {
+            logger.log("error", err);
+        }
+    });
+}
+
 function DomicilioHandler() {
     this.getPaises = getPaises;
     this.getProvincias = getProvincias;
     this.getDepartamentos = getDepartamentos;
     this.getLocalidades = getLocalidades;
+    this.getDomicilios = getDomicilios;
 };
 
 module.exports = DomicilioHandler;

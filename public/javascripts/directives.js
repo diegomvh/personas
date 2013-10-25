@@ -3,12 +3,21 @@
 /* Directives */
 
 /* 0 a 3 por pais
-4 a 6 por provincia
-7 a 10 por ciudad
-11 a 14 por zonas
-15 a 18 por cuadra
+4 a 5 por provincia
+6 a 7 por departamento
+8 a 14 por localidad
+15 a 16 por zonas
+17 a 18 por cuadra
 19 en adelante se ve todo
 */
+
+var NIVELES = {
+    pais: [0, 3],
+    provincia: [4, 5],
+    departamento: [6, 7],
+    localidad: [8, 14],
+    domicilio: [19, 21]
+}
 
 var directives = angular.module('Personas.directives', []);
 
@@ -93,7 +102,6 @@ directives.directive("appMap", function ($http) {
                     if (toCenter) clearTimeout(toCenter);
                     toCenter = setTimeout(function () {
                         if (scope.center) {
-
                             // check if the center has really changed
                             if (map.center.lat() != scope.center.lat ||
                                 map.center.lng() != scope.center.lon) {
@@ -107,7 +115,20 @@ directives.directive("appMap", function ($http) {
                 });
                 google.maps.event.addListener(map, 'zoom_changed', function() {
                     var zoomLevel = map.getZoom();
-                    console.log(zoomLevel);
+                    var bounds = map.getBounds().toUrlValue();
+                    var center = map.getCenter().toUrlValue();
+                    // Nivel de Domicilio
+                    if (zoomLevel >= NIVELES.domicilio[0]) {
+                        $http.get('/api/geo/domicilios', {
+                            params: { bounds: bounds, center: center }}).
+                            success(function(data, status, headers, config) {
+                                scope.addMarkers(data.objects, NIVELES.domicilio[0], NIVELES.domicilio[1]);
+                            }).
+                            error(function(data, status, headers, config) {
+                                console.log(data, status, headers, config);
+                            });
+                    }
+                    //console.log(zoomLevel, bounds, center);
                 });
             }
             
@@ -136,31 +157,40 @@ directives.directive("appMap", function ($http) {
                 if (angular.isString(loc)) loc = scope.$eval(loc);
                 return new google.maps.LatLng(loc.lat, loc.lon);
             }
-            
-            $http.get('/api/paises').
+
+            //google.maps.event.addListener(markerManager, 'loaded', function() {
+            $http.get('/api/geo/paises').
                 success(function(data, status, headers, config) {
                     scope.addMarkers(data.objects, 1, 3);
                 }).
                 error(function(data, status, headers, config) {
                     console.log(data, status, headers, config);
                 });
-            
-            $http.get('/api/provincias').
+
+            $http.get('/api/geo/provincias').
                 success(function(data, status, headers, config) {
-                    scope.addMarkers(data.objects, 4, 6);
+                    scope.addMarkers(data.objects, NIVELES.provincia[0], NIVELES.provincia[1]);
                 }).
                 error(function(data, status, headers, config) {
                     console.log(data, status, headers, config);
                 });
-            
-            $http.get('/api/localidades').
+
+            $http.get('/api/geo/departamentos').
                 success(function(data, status, headers, config) {
-                    scope.addMarkers(data.objects, 7, 10);
+                    scope.addMarkers(data.objects, NIVELES.departamento[0], NIVELES.departamento[1]);
                 }).
                 error(function(data, status, headers, config) {
                     console.log(data, status, headers, config);
                 });
-            
+
+            $http.get('/api/geo/localidades').
+                success(function(data, status, headers, config) {
+                    scope.addMarkers(data.objects, 7, 14);
+                }).
+                error(function(data, status, headers, config) {
+                    console.log(data, status, headers, config);
+                });
+            //});
         }
     };
 });
