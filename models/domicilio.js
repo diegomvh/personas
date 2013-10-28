@@ -52,11 +52,11 @@ var DomicilioSchema = new mongoose.Schema({
     }
 });
 
-var DomicilioModel = mongoose.model('Domicilio', DomicilioSchema, 'domicilios');
-
 DomicilioSchema.methods.findNear = function(selector, slice) {
     selector.location = { $nearSphere: this.location, $maxDistance: 0.01};
     return this.model('Domicilio').find(selector, slice);
 }
+
+var DomicilioModel = mongoose.model('Domicilio', DomicilioSchema, 'domicilios');
 
 module.exports = DomicilioModel

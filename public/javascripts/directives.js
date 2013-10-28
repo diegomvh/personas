@@ -16,7 +16,7 @@ var NIVELES = {
     provincia: [4, 5],
     departamento: [6, 7],
     localidad: [8, 14],
-    domicilio: [19, 21]
+    domicilio: [18, 19]
 }
 
 var directives = angular.module('Personas.directives', []);
