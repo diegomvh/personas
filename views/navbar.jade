@@ -32,9 +32,9 @@ nav.navbar.navbar-fixed-top.navbar-default(role='navigation')
     form.navbar-form.navbar-left(role='search')
       .form-group
         input.form-control(type='text', placeholder='Buscar', ng-model="search")
-      button.btn(ng-click="geoCode()",ng-disabled="search.length == 0",title="search") &nbsp;
+      button.btn(ng-click="geoCode()", ng-disabled="search.length == 0", title="search") &nbsp;
         span.glyphicon.glyphicon-search
-      button.btn(ng-click="gotoCurrentLocation()",title="current location") &nbsp;
+      button.btn(ng-click="gotoCurrentLocation()", title="current location") &nbsp;
         span.glyphicon.glyphicon-home
     ul.nav.navbar-nav.navbar-right
       li
