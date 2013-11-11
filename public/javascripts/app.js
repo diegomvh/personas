@@ -20,11 +20,11 @@ padron.config(['$routeProvider', '$locationProvider', function($routeProvider, $
 19 en adelante se ve todo
 */
 padron.zoomLevels = {
-    country: [0, 3],
-    administrative_area_level_1: [4, 5],
-    administrative_area_level_2: [6, 7],
-    locality: [8, 14],
-    street_address: [18, 19]
+    country: "0,3",
+    administrative_area_level_1: "4,5",
+    administrative_area_level_2: "6,7",
+    locality: "8,14",
+    street_address: "18,19"
 }
 
 padron.levelTypes = ["country", "administrative_area_level_1", "administrative_area_level_2", "locality", "street_address"];

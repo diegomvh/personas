@@ -150,8 +150,11 @@ directives.directive("appMap", function ($http) {
                             markers[zoom].push(marker);    
                         }
                     }
-                    for (var zoom in markers)
-                        markerManager.addMarkers(markers[zoom], zoom[0], zoom[1]);
+                    for (var zoom in markers) {
+                        var zoomRange = zoom.split(",");
+                        var zoomRange = [ Number(zoomRange[0]), Number(zoomRange[1]) ];
+                        markerManager.addMarkers(markers[zoom], zoomRange[0], zoomRange[1]);
+                    }
                     
                     markerManager.refresh();
                 }
