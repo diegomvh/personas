@@ -2,7 +2,7 @@
 
 /* Filters */
 
-var filters = angular.module('Personas.filters', []);
+var filters = angular.module('Padron.filters', []);
 
 filters.filter('interpolate', ['version', function(version) {
     return function(text) {

@@ -5,7 +5,7 @@ var logger = require('../utils/logger');
   radius = 10 / 111; // 10km; 1 arcdegree ~= 111km
 */
 function getPaises(req, res) {
-    var query = DomicilioModel.find({"geoaddress.types": "country"}, "descripcion location");
+    var query = DomicilioModel.find({"geoaddress.types": "country"}, "descripcion location types");
     query.exec(function (err, paises) {
         if (!err) {
             res.send({
@@ -20,7 +20,7 @@ function getPaises(req, res) {
 }
 
 function getProvincias(req, res) {
-    var query = DomicilioModel.find({"geoaddress.types": "administrative_area_level_1"}, "descripcion location");
+    var query = DomicilioModel.find({"geoaddress.types": "administrative_area_level_1"}, "descripcion location types");
     query.exec(function (err, provincias) {
         if (!err) {
             res.send({
@@ -35,7 +35,7 @@ function getProvincias(req, res) {
 }
 
 function getDepartamentos(req, res) {
-    var query = DomicilioModel.find({"geoaddress.types": "administrative_area_level_2"}, "descripcion location");
+    var query = DomicilioModel.find({"geoaddress.types": "administrative_area_level_2"}, "descripcion location types");
     query.exec(function (err, departamentos) {
         if (!err) {
             res.send({
@@ -50,7 +50,7 @@ function getDepartamentos(req, res) {
 }
 
 function getLocalidades(req, res) {
-    var query = DomicilioModel.find({"geoaddress.types": "locality"}, "descripcion location");
+    var query = DomicilioModel.find({"geoaddress.types": "locality"}, "descripcion location types");
     query.exec(function (err, localidades) {
         if (!err) {
             res.send({
@@ -76,7 +76,7 @@ function getDomicilios(req, res) {
     var query = lugar.findNear({
         "geoaddress.types": "street_address",
 
-        }, "_id descripcion location");
+        }, "_id descripcion location types");
     if (skip)
         query.skip(skip);
     if (limit)

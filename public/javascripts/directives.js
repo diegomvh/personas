@@ -2,24 +2,7 @@
 
 /* Directives */
 
-/* 0 a 3 por pais
-4 a 5 por provincia
-6 a 7 por departamento
-8 a 14 por localidad
-15 a 16 por zonas
-17 a 18 por cuadra
-19 en adelante se ve todo
-*/
-
-var NIVELES = {
-    pais: [0, 3],
-    provincia: [4, 5],
-    departamento: [6, 7],
-    localidad: [8, 14],
-    domicilio: [18, 19]
-}
-
-var directives = angular.module('Personas.directives', []);
+var directives = angular.module('Padron.directives', []);
 
 directives.directive('appVersion', ['version', function(version) {
     return function(scope, elm, attrs) {
@@ -69,6 +52,9 @@ directives.directive("appMap", function ($http) {
                 if (map && scope.center)
                     map.setCenter(getLocation(scope.center));
             });
+            
+            // Build icons
+            padron.buildIcons();
 
             // update the control
             function updateControl() {
@@ -118,11 +104,11 @@ directives.directive("appMap", function ($http) {
                     var bounds = map.getBounds().toUrlValue();
                     var center = map.getCenter().toUrlValue();
                     // Nivel de Domicilio
-                    if (zoomLevel >= NIVELES.domicilio[0]) {
+                    if (zoomLevel >= padron.zoomAddressLevel) {
                         $http.get('/api/geo/domicilios', {
                             params: { bounds: bounds, center: center }}).
                             success(function(data, status, headers, config) {
-                                scope.addMarkers(data.objects, NIVELES.domicilio[0], NIVELES.domicilio[1]);
+                                scope.addMarkers(data.objects);
                             }).
                             error(function(data, status, headers, config) {
                                 console.log(data, status, headers, config);
@@ -133,20 +119,40 @@ directives.directive("appMap", function ($http) {
             }
             
             // add markers
-            scope.addMarkers = function(locations, minZoom, maxZoom) {
+            scope.addMarkers = function(locations) {
                 if (map && locations) {
 
                     // create new markers
-                    markers = [];
+                    markers = {};
                     if (angular.isString(locations)) locations = scope.$eval(locations);
                     for (var i = 0; i < locations.length; i++) {
                         var location = locations[i];
                         var loc = new google.maps.LatLng(location.location[0], location.location[1]);
-                        var mm = new google.maps.Marker({ position: loc, title: location.descripcion });
-                        markers.push(mm);
+                        var zoom = padron.getZoomLevel(location.types);
+                        
+                        //Build marker
+                        var marker = new google.maps.Marker({ 
+                            position: loc,
+                            map: map,
+                            icon: padron.getIcon(location.types),
+                            title: location.descripcion });
+                        
+                        //Bind click event
+                        google.maps.event.addListener(marker, 'click', function() {
+                            map.setZoom(8);
+                            map.setCenter(this.getPosition());
+                        });
+                    
+                        //Store marker
+                        if (!(zoom in markers)) {
+                            markers[zoom] = [ marker ];
+                        } else {
+                            markers[zoom].push(marker);    
+                        }
                     }
-                    markerManager.addMarkers(markers, minZoom, maxZoom);
-
+                    for (var zoom in markers)
+                        markerManager.addMarkers(markers[zoom], zoom[0], zoom[1]);
+                    
                     markerManager.refresh();
                 }
             }
@@ -161,7 +167,7 @@ directives.directive("appMap", function ($http) {
             //google.maps.event.addListener(markerManager, 'loaded', function() {
             $http.get('/api/geo/paises').
                 success(function(data, status, headers, config) {
-                    scope.addMarkers(data.objects, 1, 3);
+                    scope.addMarkers(data.objects);
                 }).
                 error(function(data, status, headers, config) {
                     console.log(data, status, headers, config);
@@ -169,7 +175,7 @@ directives.directive("appMap", function ($http) {
 
             $http.get('/api/geo/provincias').
                 success(function(data, status, headers, config) {
-                    scope.addMarkers(data.objects, NIVELES.provincia[0], NIVELES.provincia[1]);
+                    scope.addMarkers(data.objects);
                 }).
                 error(function(data, status, headers, config) {
                     console.log(data, status, headers, config);
@@ -177,7 +183,7 @@ directives.directive("appMap", function ($http) {
 
             $http.get('/api/geo/departamentos').
                 success(function(data, status, headers, config) {
-                    scope.addMarkers(data.objects, NIVELES.departamento[0], NIVELES.departamento[1]);
+                    scope.addMarkers(data.objects);
                 }).
                 error(function(data, status, headers, config) {
                     console.log(data, status, headers, config);
@@ -185,7 +191,7 @@ directives.directive("appMap", function ($http) {
 
             $http.get('/api/geo/localidades').
                 success(function(data, status, headers, config) {
-                    scope.addMarkers(data.objects, 7, 14);
+                    scope.addMarkers(data.objects);
                 }).
                 error(function(data, status, headers, config) {
                     console.log(data, status, headers, config);
