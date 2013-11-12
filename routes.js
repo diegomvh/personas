@@ -16,6 +16,7 @@ function setup(app, handlers) {
     app.get('/api/geo/departamentos', handlers.domicilio.getDepartamentos);
     app.get('/api/geo/localidades', handlers.domicilio.getLocalidades);
     app.get('/api/geo/domicilios', handlers.domicilio.getDomicilios);
+    app.get('/api/geo/:id', handlers.domicilio.getDomicilioById);
     app.get('/api/personas', handlers.persona.getPersonas);
     app.get('/api/personas/:id', handlers.persona.getPersonaById);
 }

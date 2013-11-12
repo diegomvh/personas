@@ -5,7 +5,7 @@ var logger = require('../utils/logger');
   radius = 10 / 111; // 10km; 1 arcdegree ~= 111km
 */
 function getPaises(req, res) {
-    var query = DomicilioModel.find({"geoaddress.types": "country"}, "descripcion location types");
+    var query = DomicilioModel.find({"geoaddress.types": "country"}, "descripcion location types").lean();
     query.exec(function (err, paises) {
         if (!err) {
             res.send({
@@ -20,7 +20,7 @@ function getPaises(req, res) {
 }
 
 function getProvincias(req, res) {
-    var query = DomicilioModel.find({"geoaddress.types": "administrative_area_level_1"}, "descripcion location types");
+    var query = DomicilioModel.find({"geoaddress.types": "administrative_area_level_1"}, "descripcion location types").lean();
     query.exec(function (err, provincias) {
         if (!err) {
             res.send({
@@ -35,7 +35,7 @@ function getProvincias(req, res) {
 }
 
 function getDepartamentos(req, res) {
-    var query = DomicilioModel.find({"geoaddress.types": "administrative_area_level_2"}, "descripcion location types");
+    var query = DomicilioModel.find({"geoaddress.types": "administrative_area_level_2"}, "descripcion location types").lean();
     query.exec(function (err, departamentos) {
         if (!err) {
             res.send({
@@ -50,7 +50,7 @@ function getDepartamentos(req, res) {
 }
 
 function getLocalidades(req, res) {
-    var query = DomicilioModel.find({"geoaddress.types": "locality"}, "descripcion location types");
+    var query = DomicilioModel.find({"geoaddress.types": "locality"}, "descripcion location types").lean();
     query.exec(function (err, localidades) {
         if (!err) {
             res.send({
@@ -71,7 +71,6 @@ function getDomicilios(req, res) {
         center = req.param("center");
     var center = center.split(',');
     center = [ Number(center[0]), Number(center[1]) ];
-    console.log(bounds, center);
     var lugar = DomicilioModel({location: center})
     var query = lugar.findNear({
         "geoaddress.types": "street_address",
@@ -94,12 +93,23 @@ function getDomicilios(req, res) {
     });
 }
 
+function getDomicilioById(req, res) {
+    DomicilioModel.findById(req.params.id, function (err, domicilio) {
+        if (!err) {
+            res.send(domicilio);
+        } else {
+            logger.log("error", err);
+        }
+    });
+}
+
 function DomicilioHandler() {
     this.getPaises = getPaises;
     this.getProvincias = getProvincias;
     this.getDepartamentos = getDepartamentos;
     this.getLocalidades = getLocalidades;
     this.getDomicilios = getDomicilios;
+    this.getDomicilioById = getDomicilioById;
 };
 
 module.exports = DomicilioHandler;

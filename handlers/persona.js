@@ -40,7 +40,6 @@ function getPersonas(req, res) {
         query.skip(skip);
     if (limit)
         query.limit(limit);
-    console.log(query)
     query.exec(function (err, personas) {
         if (!err) {
             res.send({

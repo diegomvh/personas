@@ -50,6 +50,13 @@ var DomicilioSchema = new mongoose.Schema({
         formatted_address: String,
         types: [ String ],
     }
+}, {
+    toObject: {
+      virtuals: true
+    }
+    ,toJSON: {
+      virtuals: true
+    }
 });
 
 DomicilioSchema.methods.findNear = function(selector, slice) {
